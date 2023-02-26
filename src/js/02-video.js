@@ -38,8 +38,8 @@ const player = new Player(iframe);
 
 const onTimeupdateThrottle = throttle(onTimeupdate, 1000);
 
-function onTimeupdate(e) {
-  const stringifyTimeupdate = JSON.stringify(e);
+function onTimeupdate(data) {
+  const stringifyTimeupdate = JSON.stringify(data);
   localStorage.setItem('videoplayer-current-time', stringifyTimeupdate);
 }
 
