@@ -54,6 +54,6 @@ try {
 
     player.setCurrentTime(currentSecondLastView);
   }
-} catch (err) {
-  console.log(err);
+} catch (error) {
+  console.log(error.message);
 }

@@ -29,43 +29,36 @@
 const throttle = require('lodash.throttle');
 const LOCAL_STORAGE_KEY = 'feedback-form-state';
 
-const refs = {
-  form: document.querySelector('.feedback-form'),
-  input: document.querySelector('.feedback-form input'),
-  textarea: document.querySelector('.feedback-form textarea'),
-};
-
-const savedFormData = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-fillFormFields();
+const formEl = document.querySelector('.feedback-form');
 
 function fillFormFields() {
+  let savedFormData = localStorage.getItem(LOCAL_STORAGE_KEY);
+
   if (savedFormData) {
-    console.log('savedFormData: string: ', savedFormData);
+    console.log('data from local storage (string): ', savedFormData);
     Object.entries(JSON.parse(savedFormData)).forEach(([name, value]) => {
-      refs.form.elements[name].value = value;
+      formEl.elements[name].value = value;
     });
   }
 }
 
-refs.form.addEventListener('input', throttle(onLocalStorageSetItem, 500));
+fillFormFields();
 
 function onLocalStorageSetItem(e) {
-  let formData = {};
-
-  if (savedFormData) {
-    formData = JSON.parse(savedFormData);
-  }
-
-  formData[e.target.name] = e.target.value;
-  console.log('formData from input: ', formData);
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
+  let savedFormData = localStorage.getItem(LOCAL_STORAGE_KEY);
+  savedFormData = savedFormData ? JSON.parse(savedFormData) : {};
+  savedFormData[e.target.name] = e.target.value;
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedFormData));
+  console.log('data from input (obj): ', savedFormData);
 }
-
-refs.form.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(e) {
   e.preventDefault();
-  e.currentTarget.reset();
-  localStorage.removeItem(LOCAL_STORAGE_KEY);
+  if (formEl.elements.message.value && formEl.elements.email.value) {
+    e.currentTarget.reset();
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+  } else alert("Don't forget to left feedback!");
 }
+
+formEl.addEventListener('input', throttle(onLocalStorageSetItem, 500));
+formEl.addEventListener('submit', onFormSubmit);
